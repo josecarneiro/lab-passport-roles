@@ -1,0 +1,20 @@
+<h1>Remove a user</h1>
+
+{{#if errorMessage}}
+  <div class="alert alert-danger">
+    ERROR: {{errorMessage}}
+  </div>
+{{/if}}
+{{#if message}}
+  <div class="alert alert-success">
+    {{message}}
+  </div>
+{{/if}}
+
+<form method="POST" action="/user/admin/remove">
+  <div class="form-group">
+    <label for="sign-up-username">Username</label>
+    <input type="username" name="username" placeholder="User Name" required>
+  </div>
+  <button>Remove user</button>
+</form>

@@ -51,7 +51,6 @@ app.use(expressSession({
 app.use((req, res, next) => {
   // Access user information from within my templates
   res.locals.user = req.session.user;
-  console.log('HEY COOKIE', req.session.user);
   // User information is being passed in cookie form
   req.session.user = req.session.user || {};
   res.locals.bossButtons = (req.session.user.role === 'boss');

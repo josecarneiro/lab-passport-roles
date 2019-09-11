@@ -1,0 +1,29 @@
+<h1>Change user role</h1>
+
+{{#if errorMessage}}
+  <div class="alert alert-danger">
+    ERROR: {{errorMessage}}
+  </div>
+{{/if}}
+{{#if message}}
+  <div class="alert alert-success">
+    {{message}}
+  </div>
+{{/if}}
+
+<form method="POST" action="/user/admin/roles">
+  <div class="form-group">
+    <label for="sign-up-username">Username</label>
+    <input type="username" name="username" placeholder="User Name" required>
+  </div>
+  <div class="form-group">
+    <label for="sign-up-role">User role:</label>
+    <select id="sign-up-role" name="role" required>
+      <option value="user">User</option>
+      <option value="ta">T.A.</option>
+      <option value="developer">Developer</option>
+      <option value="boss">Boss</option>
+    </select>
+  </div>
+  <button>Change user role</button>
+</form>

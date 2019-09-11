@@ -1,2 +1,12 @@
 <h1>User Profile</h1>
-<p>{{name}}</p>
+<p>Username: {{user.username}}
+<br/>Role: {{user.role}}
+</p>
+
+{{#if bossButtons}}
+  <ul>
+    <li><a href="/user/admin/register">Register new users</a></li>
+    <li><a href="/user/admin/roles">Edit user roles</a></li>
+    <li><a href="/user/admin/remove">Remove users</a></li>
+  </ul>
+{{/if}}

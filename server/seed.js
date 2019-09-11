@@ -8,7 +8,8 @@ db.connect({ uri: process.env.MONGODB_URI })
     return User.deleteMany({});
   })
   .then(() => {
-    return User.signUp('BigBoss', 'boss@company.com', 'password1', 'boss');
+    // return User.signUp('BigBoss', 'boss@company.com', 'password1', 'boss');
+    return User.signUp('BigBoss', 'password1', 'boss');
   })
   .then(() => {
     console.log('Database successfully deleted and re-seeded')

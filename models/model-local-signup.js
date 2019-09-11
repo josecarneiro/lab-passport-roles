@@ -2,7 +2,7 @@
 
 const bcrypt = require('bcryptjs');
 
-const localSignup = function(username, email, password, role='user') {
+const localSignup = function(username, password, role='user') {
   const Model = this;
 
   return Model.findOne({ username })
@@ -16,7 +16,6 @@ const localSignup = function(username, email, password, role='user') {
     .then(hash => {
       return Model.create({
         username: username,
-        email: email,
         passwordHash: hash,
         role: role
       });

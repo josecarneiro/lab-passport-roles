@@ -12,8 +12,6 @@ const serveFavicon = require('serve-favicon');
 const expressSession = require('express-session');
 const MongoStore = require('connect-mongo')(expressSession);
 const mongoose = require('mongoose');
-const passport = require('passport');
-const PassportLocalStrategy = require('passport-local').Strategy;
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/user');
@@ -49,64 +47,16 @@ app.use(expressSession({
   })
 }));
 
-// PASSPORT CONFIGURATION
-/*
-  1. Tell passport how to serialize and deserialize data
-     Serialize: how we take data from user object and save in the session
-     Deserialize: how we take value from session and use it to access user object
-  2. Tell passport which strategy we're using for login and for signup
-  3. Install as middleware
-  4. Tell app which routes to use for each strategy
-*/
-
-const User = require('./models/user');
-
-passport.serializeUser((user, callback) => {
-  callback(null, user._id);
-});
-passport.deserializeUser((id, callback) => {
-  User.findById(id)
-    .then(user => {
-      callback(null, user);
-    })
-    .catch(error => {
-      callback(error);
-    });
-});
-
-passport.use('local-signin', new PassportLocalStrategy((username, password, callback) => {
-  User.signIn(username, password)
-    .then(user => {
-      callback(null, user);
-    })
-    .catch(error => {
-      callback(error);
-    });
-}));
-
-// passport.use('local-signup', new PassportLocalStrategy((username, password, callback) => {
-//   User.signUp(username, password)
-//     .then(user => {
-//       callback(null, user);
-//     })
-//     .catch(error => {
-//       callback(error);
-//     });
-// }));
-
-app.use(passport.initialize());
-app.use(passport.session());
-/* END PASSPORT CONFIGURATION */
-
 // Custom piece of middleware
 app.use((req, res, next) => {
   // Access user information from within my templates
-  res.locals.user = req.user;
+  res.locals.user = req.session.user;
+  console.log('HEY COOKIE', req.session.user);
   // User information is being passed in cookie form
-  req.user = req.user || {};
-  res.locals.bossButtons = (req.user.role === 'boss');
-  res.locals.taButtons = (req.user.role === 'ta');
-  res.locals.developerButtons = (req.user.role === 'developer');
+  req.session.user = req.session.user || {};
+  res.locals.bossButtons = (req.session.user.role === 'boss');
+  res.locals.taButtons = (req.session.user.role === 'ta');
+  res.locals.developerButtons = (req.session.user.role === 'developer');
   // Keep going to the next middleware or route handler
   next();
 });

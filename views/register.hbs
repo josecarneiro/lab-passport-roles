@@ -5,16 +5,21 @@
     ERROR: {{errorMessage}}
   </div>
 {{/if}}
+{{#if message}}
+  <div class="alert alert-success">
+    {{message}}
+  </div>
+{{/if}}
 
 <form method="POST" action="/user/admin/register">
   <div class="form-group">
     <label for="sign-up-username">Username</label>
     <input type="username" name="username" placeholder="User Name" required>
   </div>
-  <div class="form-group">
+  {{!-- <div class="form-group">
     <label for="sign-up-username">E-mail</label>
     <input type="email" name="email" placeholder="e-mail" required>
-  </div>
+  </div> --}}
   <div class="form-group">
     <label for="sign-up-password">Password</label>
     <input type="password" name="password" placeholder="A Safe Password" required>

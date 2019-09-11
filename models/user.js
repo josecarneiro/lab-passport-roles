@@ -11,8 +11,16 @@ const schema = new mongoose.Schema({
     trim: true,
     unique: true
   },
+  email: {
+    type: String,
+    required: true,
+    lowercase: true,
+    trim: true,
+    unique: true
+  },
   passwordHash: {
-    type: String
+    type: String,
+    required: true
   },
   role: {
     type: String,

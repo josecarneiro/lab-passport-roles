@@ -102,6 +102,11 @@ app.use(passport.session());
 app.use((req, res, next) => {
   // Access user information from within my templates
   res.locals.user = req.user;
+  // User information is being passed in cookie form
+  req.user = req.user || {};
+  res.locals.bossButtons = (req.user.role === 'boss');
+  res.locals.taButtons = (req.user.role === 'ta');
+  res.locals.developerButtons = (req.user.role === 'developer');
   // Keep going to the next middleware or route handler
   next();
 });

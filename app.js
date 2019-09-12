@@ -8,6 +8,11 @@ const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
 
+// Additional packages we require
+const expressSession = require('express-session');
+const MongoStore = require('connect-mongo')(expressSession);
+const mongoose = require('mongoose');
+
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/user');
 
@@ -29,6 +34,32 @@ app.use(sassMiddleware({
   outputStyle: process.env.NODE_ENV === 'development' ? 'nested' : 'compressed',
   sourceMap: true
 }));
+
+// Set up express-session
+app.use(expressSession({
+  secret: process.env.SESSION_SECRET,
+  cookie: { maxAge: 60 * 60 * 24 * 1000 },
+  resave: true,
+  saveUninitialized: false,
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+    ttl: 24 * 60 * 60
+  })
+}));
+
+// Custom piece of middleware
+app.use((req, res, next) => {
+  // Access user information from within my templates
+  res.locals.user = req.session.user;
+  // User information is being passed in cookie form
+  req.session.user = req.session.user || {};
+  res.locals.bossButtons = (req.session.user.role === 'boss');
+  res.locals.taButtons = (req.session.user.role === 'ta');
+  res.locals.developerButtons = (req.session.user.role === 'developer');
+  // Keep going to the next middleware or route handler
+  next();
+});
+
 
 app.use('/', indexRouter);
 app.use('/user', usersRouter);

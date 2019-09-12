@@ -1,16 +1,33 @@
 'use strict';
 
-const { routeGuardMiddleware, routeRoleMiddleware } = require('./../controllers/route-middleware');
+const { routeLoggedInMiddleware, routeRoleMiddleware } = require('./../controllers/route-middleware');
 const User = require('./../models/user');
 
 const { Router } = require('express');
 const router = Router();
 
-router.get('/', routeGuardMiddleware, (req, res, next) => {
+// If nothing else is passed, render the user's own page
+router.get('/', routeLoggedInMiddleware, (req, res, next) => {
   // User information is being passed in cookie form
   res.render('user');
 });
+// If a username is passed, render that user's profile (name and role)
+router.get('/:username', routeLoggedInMiddleware, (req, res, next) => {
+  const username = req.params.username;
+  User.findOne({username})
+    .then(user => {
+      res.render('user', {
+        viewingUser: true,
+        theirUsername: user.username,
+        theirRole: user.role
+      });
+    })
+    .catch(err => {
+      res.render('user', {errorMessage: err});
+    });
+});
 
+// Registration page (for admins only)
 router.get('/admin/register', routeRoleMiddleware(['boss']), (req, res, next) => {
   res.render('register');
 });
@@ -29,6 +46,7 @@ router.post('/admin/register', routeRoleMiddleware(['boss']), (req, res, next) =
     });
 });
 
+// User removal
 router.get('/admin/remove', routeRoleMiddleware(['boss']), (req, res, next) => {
   res.render('remove');
 });
@@ -50,7 +68,7 @@ router.post('/admin/remove', routeRoleMiddleware(['boss']), (req, res, next) => 
     });
 });
 
-
+// Edit roles
 router.get('/admin/roles', routeRoleMiddleware(['boss']), (req, res, next) => {
   res.render('editrole');
 });

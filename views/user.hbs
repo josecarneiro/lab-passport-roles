@@ -1,7 +1,27 @@
 <h1>User Profile</h1>
-<p>Username: {{user.username}}
-<br/>Role: {{user.role}}
-</p>
+
+{{#if errorMessage}}
+  <div class="alert alert-danger">
+    ERROR: {{errorMessage}}
+  </div>
+{{/if}}
+
+{{#if viewingUser}}
+  {{!-- Render the profile of a different user --}}
+  <p>
+    Username: {{theirUsername}}
+    <br/>
+    Role: {{theirRole}}
+  </p>
+{{else}}
+  {{!-- Else, render own user profile --}}
+  <p>
+    Username: {{user.username}}
+    <br/>
+    Role: {{user.role}}
+  </p>
+{{/if}}
+
 
 {{#if bossButtons}}
   <ul>

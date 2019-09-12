@@ -1,6 +1,6 @@
 'use strict';
 
-const routeGuardMiddleware = (req, res, next) => {
+const routeLoggedInMiddleware = (req, res, next) => {
   if (!req.session.user) {
     res.redirect('/login');
   } else {
@@ -20,4 +20,4 @@ const routeRoleMiddleware = allowedRoles => {
   };
 };
 
-module.exports = { routeGuardMiddleware, routeRoleMiddleware };
+module.exports = { routeLoggedInMiddleware, routeRoleMiddleware };

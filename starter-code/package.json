@@ -5,10 +5,11 @@
   "scripts": {
     "start": "node ./server",
     "dev": "nodemon ./server",
-    "dev:debug": "DEBUG=base* npm run dev",
+    "dev:debug": "DEBUG=base* nodemon ./server",
     "lint": "eslint ."
   },
   "dependencies": {
+    "connect-ensure-login": "^0.1.1",
     "cookie-parser": "^1.4.4",
     "debug": "^2.6.9",
     "dotenv": "^8.1.0",

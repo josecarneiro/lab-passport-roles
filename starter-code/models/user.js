@@ -1,16 +1,21 @@
-'use strict';
+"use strict";
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     passwordHash: {
       type: String,
       required: true
+    },
+    role: {
+      type: String,
+      enum: ["Boss", "Developer", "TA"]
     }
   },
   {
@@ -18,6 +23,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

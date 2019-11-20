@@ -5,15 +5,15 @@ const {
 } = require('express');
 const passportRouter = Router();
 
-// Require user model
 const User = require('./../models/user');
 const bcryptjs = require('bcryptjs');
-// Add bcrypt to encrypt passwords
 
-// Add passport
 const passport = require("passport");
 
 const ensureLogin = require('connect-ensure-login');
+
+
+// --- PASSPORT ROUTERS
 
 passportRouter.get("/signup", (req, res, next) => {
   res.render("passport/signup");
@@ -50,18 +50,36 @@ passportRouter.get(
   }
 );
 
+passportRouter.post('/sign-out', (req, res, next) => {
+  req.logout();
+  res.redirect('/');
+});
+
+// ---- BOSS ROUTERS ---- //Need to pass this to other .js document
+
+//Here the boss is able to access his private page and add/edit/delete users
 passportRouter.get(
   '/boss-page',
   ensureLogin.ensureLoggedIn('/'),
   (req, res, next) => {
     if (req.user && req.user.role === 'Boss') {
-      res.render('passport/boss-page');
+      User.find()
+        .then(users => {
+          res.render('passport/boss-page', {
+            users
+          });
+        })
+        .catch(err => {
+          next(err);
+          console.log('there was an error connecting the users to the page');
+        });
     } else {
       next(new Error('has no permission to visit this page'))
     }
   }
-)
+);
 
+//Here the boss will add a new user to the database
 passportRouter.post('/boss-page',
   (req, res, next) => {
     const {
@@ -92,10 +110,47 @@ passportRouter.post('/boss-page',
   failureRedirect: '/'
 })*/
 
+//Here the boss is able to delete users
+passportRouter.post('/users/:user_id/delete', ensureLogin.ensureLoggedIn('/'),
+  (req, res, next) => {
+    if (req.user && req.user.role === 'Boss') {
+      const userId = req.params.user_id;
+      User.findByIdAndDelete(userId)
+        .then(() => {
+          console.log('The user was deleted');
+          res.redirect('/boss-page');
+        })
+        .catch((err) => {
+          console.log('Couldnt delete user');
+          next(err);
+        });
+    } else {
+      next(new Error('has no permission to visit this page'));
+    }
+  });
 
-passportRouter.post('/sign-out', (req, res, next) => {
-  req.logout();
-  res.redirect('/');
+
+//Here the boss is able to edit users
+passportRouter.post('/users/:user_id/edit', (req, res, next) => {
+  const userId = req.params.user_id;
+
+  User.findByIdAndUpdate(userId, {
+      username: req.body.username,
+      role: req.body.role,
+    })
+    .then((user) => {
+      console.log('this user was editer');
+      res.redirect('/boss-page');
+    })
+    .catch((err) => {
+      console.log('It was not possible to edit the user');
+      next(err);
+    });
 });
+
+
+
+
+
 
 module.exports = passportRouter;

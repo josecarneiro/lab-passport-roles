@@ -6,7 +6,10 @@ const {
 const passportRouter = Router();
 
 // Require user model
+const User = require('./../models/user');
+const bcryptjs = require('bcryptjs');
 // Add bcrypt to encrypt passwords
+
 // Add passport
 const passport = require("passport");
 
@@ -22,15 +25,15 @@ passportRouter.post('/signup',
     failureRedirect: '/'
   }));
 
-  passportRouter.get("/login", (req, res, next) => {
-    res.render("passport/login");
-  });
-  
-  passportRouter.post('/login',
-    passport.authenticate('login', {
-      successRedirect: '/private-page',
-      failureRedirect: '/'
-    }));
+passportRouter.get("/login", (req, res, next) => {
+  res.render("passport/login");
+});
+
+passportRouter.post('/login',
+  passport.authenticate('login', {
+    successRedirect: '/private-page',
+    failureRedirect: '/'
+  }));
 
 passportRouter.get(
   '/private-page',
@@ -43,28 +46,52 @@ passportRouter.get(
       });
     } else {
       next(new Error('has no permission to visit this page'))
+    }
   }
-}
 );
 
 passportRouter.get(
   '/boss-page',
   ensureLogin.ensureLoggedIn('/'),
   (req, res, next) => {
-    if (req.user  && req.user.role === 'Boss') {
+    if (req.user && req.user.role === 'Boss') {
       res.render('passport/boss-page');
     } else {
       next(new Error('has no permission to visit this page'))
+    }
   }
-}
 )
 
 passportRouter.post('/boss-page',
-passport.authenticate('add-user', {
+  (req, res, next) => {
+    const {
+      username,
+      password,
+      role
+    } = req.body;
+    bcryptjs
+      .hash(password, 10)
+      .then(hash => {
+        return User.create({
+          username: username,
+          passwordHash: hash,
+          role: role
+        });
+      })
+      .then(user => {
+        req.session.user = user._id;
+        res.redirect('/');
+      })
+      .catch(error => {
+        next(error);
+      });
+  });
+
+/*passport.authenticate('add-user', {
   successRedirect: '/',
   failureRedirect: '/'
-})
-);
+})*/
+
 
 passportRouter.post('/sign-out', (req, res, next) => {
   req.logout();

@@ -11,6 +11,11 @@ const userSchema = new mongoose.Schema(
     passwordHash: {
       type: String,
       required: true
+    },
+    role: {
+      type: String,
+      required: true,
+      enum: ['Boss','Developer', 'TA'],
     }
   },
   {
@@ -19,5 +24,6 @@ const userSchema = new mongoose.Schema(
 );
 
 const User = mongoose.model('User', userSchema);
+
 
 module.exports = User;

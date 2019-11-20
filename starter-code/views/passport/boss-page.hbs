@@ -1,0 +1,20 @@
+<a href="/">Go to Index</a>
+<h2>Add a user</h2>
+<form action="/boss-page" method="POST">
+    <label for="username">Username</label><input type="text" name="username">
+    <label for="password">Password</label><input type="password" name="password">
+    <select name="role" id="role_user">
+        <option value="TA">TA</option>
+        <option value="Developer">Developer</option>
+    </select>
+    <button>Add user</button>
+</form>
+<h2>List of users</h2>
+{{#each users}}
+<form action="/users/{{this._id}}/edit" method="POST">
+    Username <textarea name="username" id="" cols="30" rows="1" required>{{this.username}}</textarea>
+    Role: <textarea name="role" id="" cols="30" rows="1" required>{{this.role}}</textarea>
+    <button>Edit</button>
+</form>
+<form action="/users/{{this._id}}/delete" method="POST"><button>Delete</button></form>
+{{/each}}

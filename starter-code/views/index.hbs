@@ -1,2 +1,11 @@
 <h1>{{title}}</h1>
 <p>Welcome to {{title}}</p>
+{{#if user}}
+<form action="/sign-out" method='POST'><button>Sign out</button></form>
+<a href="/">Index</a>
+<a href="/private-page">Private</a>
+<a href="/boss-page">Boss page</a>
+{{else}}
+<a href="/signup">Sign up</a>
+<a href="/login">Log in</a>
+{{/if}}
